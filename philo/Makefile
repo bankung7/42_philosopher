@@ -10,7 +10,7 @@ RM = rm -rf
 INC = -Iinc
 
 SRCS_DIR = srcs/
-SRCS = main.c
+SRCS = main.c setup.c utils.c process.c
 
 OBJS_DIR = objs/
 OBJS = $(addprefix $(OBJS_DIR),$(SRCS:.c=.o))
