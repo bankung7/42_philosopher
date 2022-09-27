@@ -10,15 +10,16 @@ void	ft_control(t_data *data, t_philo *philo)
 		while (i < data->n)
 		{
 			pthread_mutex_lock(&data->control);
-			if (ft_gettime() > philo[i].lasteat + data->wait)
+			if (ft_gettime() >= philo[i].lasteat + data->wait)
 			{
-				ft_msg("died", philo, ft_gettime());
+				ft_msg("died", philo);
 				data->is_somedie = 1;
 				return ;
 			}
 			pthread_mutex_unlock(&data->control);
 			i++;
 		}
+		usleep(10);
 	}
 }
 
@@ -31,14 +32,15 @@ void	*ft_dining(void *arg)
 	{
 		ft_pickfork(philo, philo->left);
 		ft_pickfork(philo, philo->right);
-		ft_msg("is eating", philo, ft_gettime());
-		ft_sleep(philo->data->eat);
+		pthread_mutex_lock(&philo->data->control);
 		philo->lasteat = ft_gettime();
+		ft_msg("is eating", philo);
+		pthread_mutex_unlock(&philo->data->control);
+		ft_sleep(philo->data->eat);
 		philo->round++;
 		ft_dropfork(philo);
 		ft_sleep(philo->data->sleep);
-		ft_msg("is thinking", philo, ft_gettime());
-		ft_sleep(philo->data->wait);
+		ft_msg("is thinking", philo);
 	}
 	return (0);
 }
@@ -57,10 +59,10 @@ int	ft_philo(t_data *data)
 	while (i < data->n)
 	{
 		if (i % 2 != 0)
-			usleep(1000);
+			usleep(100);
 		philo[i].lasteat = ft_gettime();
-		pthread_create(&philo[i].tid, NULL, ft_dining, (void*)&philo[i]);
-		pthread_detach(philo[i].tid);
+		pthread_create(&data->thd[i], NULL, ft_dining, (void*)&philo[i]);
+		pthread_detach(data->thd[i]);
 		i++;
 	}
 	ft_control(data, philo);

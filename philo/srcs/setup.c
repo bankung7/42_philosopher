@@ -46,5 +46,8 @@ int	ft_setup(t_data *data, int argc, char **argv)
 	if (data->n <= 0 || data->wait <= 0 || data->eat <= 0 \
 			|| data->sleep <= 0)
 		return (1);
+	data->thd = (pthread_t*)malloc(sizeof(pthread_t) * data->n);
+	if (!data->thd)
+		return (1);
 	return (0);
 }

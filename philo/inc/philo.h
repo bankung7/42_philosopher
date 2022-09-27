@@ -18,6 +18,7 @@ typedef struct	s_data
 	int	musteat;
 	int	is_somedie;
 	unsigned long	stime;
+	pthread_t *thd;
 	pthread_mutex_t *fork;
 	pthread_mutex_t printer;
 	pthread_mutex_t control;
@@ -31,12 +32,11 @@ typedef struct	s_philo
 	int	round;
 	int	is_die;
 	unsigned long	lasteat;
-	pthread_t	tid;
 	t_data	*data;
 }	t_philo;
 
 // process.c
-void	ft_msg(char *str, t_philo *philo, unsigned long t);
+void	ft_msg(char *str, t_philo *philo);
 void	ft_pickfork(t_philo *philo, int fork);
 void	ft_dropfork(t_philo *philo);
 void	ft_sleep(int time);
