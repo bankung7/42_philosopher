@@ -17,6 +17,7 @@ typedef struct	s_data
 	int	sleep;
 	int	musteat;
 	int	is_somedie;
+	int	fin_eat;
 	unsigned long	stime;
 	pthread_t *thd;
 	pthread_mutex_t *fork;

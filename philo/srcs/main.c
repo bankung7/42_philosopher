@@ -12,7 +12,7 @@ void	ft_control(t_data *data, t_philo *philo)
 			pthread_mutex_lock(&data->control);
 			if (ft_gettime() >= philo[i].lasteat + data->wait)
 			{
-				ft_msg("died", philo);
+				ft_msg("died", &philo[i]);
 				data->is_somedie = 1;
 				return ;
 			}
@@ -37,10 +37,12 @@ void	*ft_dining(void *arg)
 		ft_msg("is eating", philo);
 		pthread_mutex_unlock(&philo->data->control);
 		ft_sleep(philo->data->eat);
-		philo->round++;
+		philo->round += 1;
 		ft_dropfork(philo);
 		ft_sleep(philo->data->sleep);
 		ft_msg("is thinking", philo);
+		if (philo->musteat != -1 && philo->round == philo->data->musteat)
+			philo->data->fin_eat += 1;
 	}
 	return (0);
 }
