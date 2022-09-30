@@ -41,8 +41,6 @@ void	*ft_dining(void *arg)
 		ft_dropfork(philo);
 		ft_sleep(philo->data->sleep);
 		ft_msg("is thinking", philo);
-		if (philo->musteat != -1 && philo->round == philo->data->musteat)
-			philo->data->fin_eat += 1;
 	}
 	return (0);
 }

@@ -41,7 +41,6 @@ int	ft_setup(t_data *data, int argc, char **argv)
 	data->eat = ft_atoi(argv[3]);
 	data->sleep = ft_atoi(argv[4]);
 	data->musteat = -1;
-	data->eat_least = 0;
 	if (argc == 6)
 		data->musteat = ft_atoi(argv[5]);
 	if (data->n <= 0 || data->wait <= 0 || data->eat <= 0 \

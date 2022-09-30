@@ -25,10 +25,10 @@ $(OBJS_DIR)%.o: $(SRCS_DIR)%.c
 	$(CC) $(CFLAGS) $(INC) -c $^ -o $@
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(NAME) *.dSYM
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(OBJS_DIR)
 
 re: fclean all
 
