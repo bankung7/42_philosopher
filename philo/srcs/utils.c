@@ -1,67 +1,59 @@
 #include "philo.h"
 
-int	ft_timedif(unsigned long t1, unsigned long t2)
+int ft_atoi(char *s)
 {
-	return ((int)(t1- t2));
+    int i;
+    int sign;
+    int num;
+
+    i = 0;
+    sign = 1;
+    num = 0;
+    while (s[i] && (s[i] == ' ' || s[i] == '\t'))
+        i++;
+    if (s[i] == '+' || s[i] == '-')
+    {
+        if (s[i] == '-')
+            sign = -1;
+        i++;
+    }
+    while (s[i])
+    {
+        if (s[i] < '0' || s[i] > '9')
+            return (-1);
+        num = num * 10 + (s[i] - '0');
+        i++;
+    }
+    return (num * sign);
 }
 
-unsigned long ft_gettime(void)
+int ft_clean(t_data *data, int res)
 {
-	struct timeval	t;
+    int i;
 
-	gettimeofday(&t, NULL);
-	return (t.tv_sec * 1000 + t.tv_usec / 1000);
+    i = 0;
+    if (data->tid)
+        free(data->tid);
+    if (data->fork)
+    {
+        while (i < 0)
+            pthread_mutex_destroy(&data->fork[i++]);
+        pthread_mutex_destroy(&data->mcon);
+        pthread_mutex_destroy(&data->mprint);
+        free(data->fork);
+    }
+    return (res);
 }
 
-int	ft_atoi(char *str)
+int ft_timedif(unsigned long t1, unsigned long t2)
 {
-	int	i;
-	int	num;
-	int	sign;
-
-	i = 0;
-	num = 0;
-	sign = 1;
-	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	while (str[i])
-	{
-		if (str[i] < '0' || str[i] > '9')
-			return (-1);
-		num = num * 10 + (str[i] -'0');
-		i++;
-	}
-	return (num * sign);
+    return ((int)(t1- t2));
 }
 
-int	ft_exit(char *str, t_data *data, t_philo *philo, int res)
+unsigned long   ft_gettime(void)
 {
-	if (data)
-	{
-		if (data->fork)
-			free(data->fork);
-		free(data);
-	}
-	if (philo)
-		free(philo);
-	if (str != 0)
-		printf("%s\n", str);
-	return (res);
-}
+    struct timeval t;
 
-void	ft_destroy(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->n)
-		pthread_mutex_destroy(&data->fork[i++]);
-	pthread_mutex_destroy(&data->printer);
-	pthread_mutex_destroy(&data->control);
+    gettimeofday(&t, NULL);
+    return (t.tv_sec * 1000 + t.tv_usec / 1000);
 }

@@ -1,53 +1,55 @@
 #include "philo.h"
 
-int	ft_setphilo(t_data *data, t_philo *philo)
+t_philo *ft_setphilo(t_data *data)
 {
-	int	i;
+    int i;
+    t_philo *philo;
 
-	i = 0;
-	while (i < data->n)
-	{
-		philo[i].pid = i;
-		philo[i].left = i;
-		philo[i].right = (i + 1) % data->n;
-		philo[i].round = 0;
-		philo[i].is_die = 0;
-		philo[i].data = data;
-		i++;
-	}
-	return (0);
+    i = 0;
+    philo = malloc(sizeof(t_philo) * data->n);
+    if (!philo)
+        return (0);
+    while (i < data->n)
+    {
+        philo[i].pid = i;
+        philo[i].round = 0;
+        philo[i].left = i;
+        philo[i].right = (i + 1) % data->n;
+        philo[i].stage = 0;
+        philo[i].goal = 0;
+        philo[i].data = data;
+        i++;
+    }
+    return (philo);
 }
 
-int	ft_setmutex(t_data *data)
+int ft_setup(t_data *data)
 {
-	int	i;
+    int i;
 
-	i = 0;
-	data->fork = malloc(sizeof(pthread_mutex_t) * data->n);
-	if (!data->fork)
-		return (1);
-	while (i < data->n)
-		pthread_mutex_init(&data->fork[i++], NULL);
-	pthread_mutex_init(&data->printer, NULL);
-	pthread_mutex_init(&data->control, NULL);
-	return (0);	
+    i = 0;
+    data->tid = malloc(sizeof(pthread_t) * data->n);
+    data->fork = malloc(sizeof(pthread_mutex_t) * data->n);
+    if (!data->tid || !data->fork)
+        return (1);
+    while (i < data->n)
+        pthread_mutex_init(&data->fork[i++], NULL);
+    pthread_mutex_init(&data->mcon, NULL);
+    pthread_mutex_init(&data->mprint, NULL);
+    return (0);
 }
 
-int	ft_setup(t_data *data, int argc, char **argv)
+int ft_setdata(t_data *data, int argc, char **argv)
 {
-	memset(data, 0, sizeof(t_data));
-	data->n = ft_atoi(argv[1]);
-	data->wait = ft_atoi(argv[2]);
-	data->eat = ft_atoi(argv[3]);
-	data->sleep = ft_atoi(argv[4]);
-	data->musteat = -1;
-	if (argc == 6)
-		data->musteat = ft_atoi(argv[5]);
-	if (data->n <= 0 || data->wait <= 0 || data->eat <= 0 \
-			|| data->sleep <= 0)
-		return (1);
-	data->thd = (pthread_t*)malloc(sizeof(pthread_t) * data->n);
-	if (!data->thd)
-		return (1);
-	return (0);
+    data->n = ft_atoi(argv[1]);
+    data->twait = ft_atoi(argv[2]);
+    data->teat = ft_atoi(argv[3]);
+    data->tsleep = ft_atoi(argv[4]);
+    if (argc == 6)
+        data->goal = ft_atoi(argv[5]);
+    else
+        data->goal = -1;
+    data->stage = 0;
+    data->print = 0;
+    return (0);
 }

@@ -1,86 +1,107 @@
 #include "philo.h"
 
-void	ft_control(t_data *data, t_philo *philo)
+void ft_control(t_data *data, t_philo *philo)
 {
-	int	i;
+    int i;
+    int sum;
 
-	while (1)
-	{
-		i = 0;
-		while (i < data->n)
-		{
-			pthread_mutex_lock(&data->control);
-			if (ft_gettime() >= philo[i].lasteat + data->wait)
-			{
-				ft_msg("died", &philo[i]);
-				data->is_somedie = 1;
-				return ;
-			}
-			pthread_mutex_unlock(&data->control);
-			i++;
-		}
-		usleep(10);
-	}
+    i = 0;
+    while (1)
+    {
+        i = 0;
+        sum = 0;
+        while (i < data->n)
+        {
+            pthread_mutex_lock(&data->mcon);
+            if (ft_gettime() > (philo[i].tlasteat + data->twait))
+            {
+                data->stage = -1;
+                ft_msg(&philo[i], "died", 1);
+                pthread_mutex_unlock(&data->mcon);
+                return;
+            }
+            sum += philo[i].goal;
+            if (sum == data->n)
+                return ;
+            pthread_mutex_unlock(&data->mcon);
+            i++;
+        }
+        usleep(1000);
+    }
 }
 
-void	*ft_dining(void *arg)
+void *ft_dinner(void *arg)
 {
-	t_philo	*philo;
+    t_philo *philo;
 
-	philo = (t_philo*)arg;
-	while (1)
-	{
-		ft_pickfork(philo, philo->left);
-		ft_pickfork(philo, philo->right);
-		pthread_mutex_lock(&philo->data->control);
-		philo->lasteat = ft_gettime();
-		ft_msg("is eating", philo);
-		pthread_mutex_unlock(&philo->data->control);
-		ft_sleep(philo->data->eat);
-		philo->round += 1;
-		ft_dropfork(philo);
-		ft_sleep(philo->data->sleep);
-		ft_msg("is thinking", philo);
-	}
-	return (0);
+    philo = (t_philo *)arg;
+    while (philo->data->stage == 0 && philo->goal != 1)
+    {
+        ft_pickfork(philo, philo->left);
+        ft_pickfork(philo, philo->right);
+        pthread_mutex_lock(&philo->data->mcon);
+        philo->tlasteat = ft_gettime();
+        ft_msg(philo, "is eating", 0);
+        philo->round += 1;
+        if (philo->round >= philo->data->goal)
+            philo->goal = 1;
+        pthread_mutex_unlock(&philo->data->mcon);
+        ft_wait(philo->data->teat);
+        ft_releasefork(philo);
+        ft_msg(philo, "is sleeping", 0);
+        ft_wait(philo->data->tsleep);
+        ft_msg(philo, "is thinking", 0);
+    }
+    printf("%d stop looping\n", philo->pid + 1);
+    return (0);
 }
 
-int	ft_philo(t_data *data)
+int ft_philosopher(t_data *data)
 {
-	int	i;
-	t_philo	*philo;
+    int i;
+    t_philo *philo;
+    unsigned long time;
 
-	i = 0;
-	philo = malloc(sizeof(t_philo) * data->n);
-	if (!philo)
-		return (ft_exit("Something wrong", data, 0, 1));
-	ft_setphilo(data, philo);
-	data->stime = ft_gettime();
-	while (i < data->n)
-	{
-		if (i % 2 != 0)
-			usleep(100);
-		philo[i].lasteat = ft_gettime();
-		pthread_create(&data->thd[i], NULL, ft_dining, (void*)&philo[i]);
-		pthread_detach(data->thd[i]);
-		i++;
-	}
-	ft_control(data, philo);
-	return (0);
+    i = 0;
+    philo = ft_setphilo(data);
+    if (!philo)
+        return (ft_clean(data, 1));
+    time = ft_gettime();
+    while (i < data->n)
+    {
+        if (i % 2 == 1)
+            usleep(100);
+        philo[i].tstart = time;
+        philo[i].tlasteat = time;
+        philo[i].tdie = philo[i].tlasteat + data->twait;
+        pthread_create(&data->tid[i], NULL, ft_dinner, (void *)&philo[i]);
+        //pthread_detach(data->tid[i]);
+        i++;
+    }
+    ft_control(data, philo);
+    i = 0;
+    while (i < data->n)
+        pthread_join(data->tid[i++], NULL);
+    free(philo);
+    return (ft_clean(data, 0));
 }
 
-int	main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	t_data	*data;
+    t_data data;
 
-	if (argc < 5 || argc > 6)
-		return (ft_exit("Argument not complete", 0, 0, 1));
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (0);
-	if (ft_setup(data, argc, argv) == 1 || ft_setmutex(data) == 1)
-		return(ft_exit("Some argument wrong", data, 0, 1));
-	ft_philo(data);
-	ft_exit(0, data, 0, 0);
-	return (0);
+    // get argument
+    if (argc < 5 || argc > 6)
+        return (0);
+    // set data
+    if (ft_setdata(&data, argc, argv) == 1)
+        return (1);
+
+    // build thread and mutex
+    if (ft_setup(&data) == 1)
+        return (ft_clean(&data, 1));
+
+    // run
+    ft_philosopher(&data);
+    return (0);
 }
