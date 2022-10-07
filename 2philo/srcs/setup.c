@@ -19,8 +19,6 @@ void    ft_setphilo(t_data *data, t_philo *philo)
             philo[i].right = i;
             philo[i].left = (i + 1) % data->n;
         }
-        // philo[i].round = 0;
-        // philo[i].stage = 0;
         philo[i].data = data;
         i++;
     }

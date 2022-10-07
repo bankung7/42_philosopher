@@ -34,6 +34,7 @@ typedef struct s_philo
     int stage;
     unsigned long stime;
     unsigned long etime;
+    unsigned long dtime;
     t_data *data;
 }   t_philo;
 
@@ -42,6 +43,7 @@ void    ft_pickfork(t_philo *philo, int fork);
 int    ft_eat(t_philo *philo);
 void    ft_releasefork(t_philo *philo);
 void    ft_sleeping(t_philo *philo);
+void    ft_msg(t_philo *philo, char *str);
 
 // setup.c
 void    ft_setphilo(t_data *data, t_philo *philo);

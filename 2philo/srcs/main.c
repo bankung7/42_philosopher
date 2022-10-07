@@ -41,6 +41,7 @@ void    *ft_dining(void *arg)
         ft_releasefork(philo);
         ft_sleeping(philo);
     }
+    ft_msg(philo, "=====end");
     return (0);
 }
 
@@ -56,9 +57,12 @@ int ft_philosopher(t_data *data)
         return (1);
     ft_setphilo(data, philo);
     stime = ft_gettime();
+    printf("%d\n", data->goal);
     while (i < data->n)
     {
         philo[i].stime = stime;
+        philo[i].etime = stime;
+        philo[i].dtime = stime + data->wait;
         pthread_create(&data->tid[i], NULL, ft_dining, (void*)&philo[i]);
         if (i % 2== 0)
             usleep(100);

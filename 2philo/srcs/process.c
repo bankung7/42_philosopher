@@ -21,7 +21,7 @@ int    ft_eat(t_philo *philo)
     pthread_mutex_lock(&philo->data->con);
     philo->etime = ft_gettime();
     philo->round += 1;
-    if (philo->round >= philo->data->goal)
+    if (philo->data->goal != -1 && philo->round >= philo->data->goal)
         philo->stage = 1;
     if (philo->data->stage == 1)
     {
