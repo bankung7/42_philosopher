@@ -32,20 +32,23 @@ int ft_clean(t_data *data, int res)
     int i;
 
     i = 0;
-    if (data)
+    if (data->tid)
+        free(data->tid);
+    if (data->fork)
     {
-        if (data->tid)
-            free(data->tid);
-        if (data->fork)
+        while (i < data->n)
         {
-            while (i < data->n)
-                pthread_mutex_destroy(&data->fork[i++]);
-            pthread_mutex_destroy(&data->con);
-            pthread_mutex_destroy(&data->printer);
-            free(data->fork);
+            if (data->ifork[i] == 1)
+                pthread_mutex_unlock(&data->fork[i]);
+            pthread_mutex_destroy(&data->fork[i]);
+            i++;
         }
-        free(data);
-    }
+        free(data->fork);
+        free(data->ifork);
+        pthread_mutex_destroy(&data->fcon);
+        pthread_mutex_destroy(&data->con);
+        pthread_mutex_destroy(&data->printer);
+        }
     return (res);
 }
 

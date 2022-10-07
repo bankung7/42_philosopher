@@ -1,28 +1,30 @@
 #include "philo.h"
 
-void    *ft_control(t_data *data, t_philo *philo)
+void    ft_control(t_data *data, t_philo *philo)
 {
     int i;
-
-    i = 0;
+    int sum;
+    
     while (1)
     {
+        i = 0;
+        sum = 0;
         while (i < data->n)
         {
             pthread_mutex_lock(&data->con);
-            if (ft_gettime() > (philo[i].etime + philo[i].data->wait))
-            {
-                ft_msg("died", &philo[i], 1);
-                data->stage = -1;
-                pthread_mutex_unlock(&data->con);
-                //printf("con end\n");
-                return (0);
-            }
+            sum += philo[i].stage; 
             pthread_mutex_unlock(&data->con);
+            i++;
+        }
+        if (sum == data->n)
+        {
+            pthread_mutex_lock(&data->con);
+            data->stage = 1;
+            pthread_mutex_unlock(&data->con);
+            break;
         }
         usleep(100);
     }
-    return (0);
 }
 
 void    *ft_dining(void *arg)
@@ -30,30 +32,15 @@ void    *ft_dining(void *arg)
     t_philo *philo;
 
     philo = (t_philo*)arg;
-
     while (1)
     {
-        pthread_mutex_lock(&philo->data->con);
-        if (philo->data->stage < 0)
-        {
-            pthread_mutex_unlock(&philo->data->con);
-            return (0);
-        }
-        pthread_mutex_unlock(&philo->data->con);
         ft_pickfork(philo, philo->left);
         ft_pickfork(philo, philo->right);
-        pthread_mutex_lock(&philo->data->con);
-        philo->etime = ft_gettime();
-        philo->round += 1;
-        ft_msg("is eating", philo, 0);
-        pthread_mutex_unlock(&philo->data->con);
-        ft_wait(philo->data->eat);
+        if (ft_eat(philo) == 1)
+            break ;
         ft_releasefork(philo);
-        ft_msg("is sleeping", philo, 0);
-        ft_wait(philo->data->sleep);
-        ft_msg("is thinking", philo, 0);
+        ft_sleeping(philo);
     }
-    //printf("%d end\n", philo->pid);
     return (0);
 }
 
@@ -61,19 +48,20 @@ int ft_philosopher(t_data *data)
 {
     int i;
     t_philo *philo;
+    unsigned long   stime;
 
     i = 0;
     philo = malloc(sizeof(t_philo) * data->n);
     if (!philo)
         return (1);
     ft_setphilo(data, philo);
+    stime = ft_gettime();
     while (i < data->n)
     {
-        philo[i].stime = ft_gettime();
-        philo[i].etime = philo[i].stime;
+        philo[i].stime = stime;
         pthread_create(&data->tid[i], NULL, ft_dining, (void*)&philo[i]);
-        if (i % 2 == 0)
-            usleep(300);
+        if (i % 2== 0)
+            usleep(100);
         i++;
     }
     ft_control(data, philo);
@@ -81,8 +69,7 @@ int ft_philosopher(t_data *data)
     while (i < data->n)
         pthread_join(data->tid[i++], NULL);
     free(philo);
-    //ft_clearlock(data, philo);
-    return (0);
+    return (1);   
 }
 
 int main(int argc, char **argv)
@@ -95,6 +82,5 @@ int main(int argc, char **argv)
         return (ft_clean(&data, 1));
     if (ft_philosopher(&data) == 1)
         return (ft_clean(&data, 1));
-    //ft_clean(&data, 0);
     return (0);
 }

@@ -17,8 +17,10 @@ typedef struct s_data
     int sleep;
     int goal;
     int stage;
+    int *ifork;
     pthread_t *tid;
     pthread_mutex_t *fork;
+    pthread_mutex_t fcon;
     pthread_mutex_t con;
     pthread_mutex_t printer;
 }   t_data;
@@ -36,10 +38,10 @@ typedef struct s_philo
 }   t_philo;
 
 // process.c
-void    ft_msg(char *str, t_philo *philo, int res);
 void    ft_pickfork(t_philo *philo, int fork);
+int    ft_eat(t_philo *philo);
 void    ft_releasefork(t_philo *philo);
-void    ft_clearlock(t_data *data, t_philo *philo);
+void    ft_sleeping(t_philo *philo);
 
 // setup.c
 void    ft_setphilo(t_data *data, t_philo *philo);
