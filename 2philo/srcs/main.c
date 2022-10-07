@@ -1,6 +1,6 @@
 #include "philo.h"
 
-void    ft_control(t_data *data, t_philo *philo)
+int    ft_control(t_data *data, t_philo *philo)
 {
     int i;
     int sum;
@@ -12,7 +12,13 @@ void    ft_control(t_data *data, t_philo *philo)
         while (i < data->n)
         {
             pthread_mutex_lock(&data->con);
-            sum += philo[i].stage; 
+            sum += philo[i].stage;
+            if (ft_gettime() > philo[i].dtime)
+            {
+                data->stage = 1;
+                ft_msg(&philo[i], "died");
+                return (pthread_mutex_unlock(&data->con));
+            }
             pthread_mutex_unlock(&data->con);
             i++;
         }
@@ -20,11 +26,11 @@ void    ft_control(t_data *data, t_philo *philo)
         {
             pthread_mutex_lock(&data->con);
             data->stage = 1;
-            pthread_mutex_unlock(&data->con);
-            break;
+            return (pthread_mutex_unlock(&data->con));
         }
-        usleep(100);
+        usleep(5000);
     }
+    return (0);
 }
 
 void    *ft_dining(void *arg)
@@ -41,7 +47,6 @@ void    *ft_dining(void *arg)
         ft_releasefork(philo);
         ft_sleeping(philo);
     }
-    ft_msg(philo, "=====end");
     return (0);
 }
 
@@ -57,11 +62,9 @@ int ft_philosopher(t_data *data)
         return (1);
     ft_setphilo(data, philo);
     stime = ft_gettime();
-    printf("%d\n", data->goal);
     while (i < data->n)
     {
         philo[i].stime = stime;
-        philo[i].etime = stime;
         philo[i].dtime = stime + data->wait;
         pthread_create(&data->tid[i], NULL, ft_dining, (void*)&philo[i]);
         if (i % 2== 0)

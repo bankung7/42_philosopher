@@ -1,25 +1,29 @@
 #include "philo.h"
 
-void    ft_msg(t_philo *philo, char *str)
+int    ft_msg(t_philo *philo, char *str)
 {
     pthread_mutex_lock(&philo->data->printer);
+    if (philo->data->iprint == 1)
+        return (pthread_mutex_unlock(&philo->data->printer));
     printf("%d\t%d %s\n", ft_timedif(ft_gettime(), philo->stime), philo->pid + 1, str);
-    pthread_mutex_unlock(&philo->data->printer);
+    if (philo->data->stage == 1)
+        philo->data->iprint = 1;
+    return (pthread_mutex_unlock(&philo->data->printer));
 }
 
-void    ft_pickfork(t_philo *philo, int fork)
+int    ft_pickfork(t_philo *philo, int fork)
 {
-    pthread_mutex_lock(&philo->data->fork[fork]);
     pthread_mutex_lock(&philo->data->fcon);
     philo->data->ifork[fork] = 1;
     pthread_mutex_unlock(&philo->data->fcon);
     ft_msg(philo, "has taken a fork");
+    return (0);
 }
 
 int    ft_eat(t_philo *philo)
 {
     pthread_mutex_lock(&philo->data->con);
-    philo->etime = ft_gettime();
+    philo->dtime = ft_gettime() + philo->data->wait;
     philo->round += 1;
     if (philo->data->goal != -1 && philo->round >= philo->data->goal)
         philo->stage = 1;
