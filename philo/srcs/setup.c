@@ -7,6 +7,8 @@ int ft_clean(t_data *data, int res)
     i = 0;
     if (data->tid)
         free(data->tid);
+    if (data->ifork)
+        free(data->ifork);
     if (data->fork && res == 1)
         free(data->fork);
     else
@@ -14,6 +16,7 @@ int ft_clean(t_data *data, int res)
         while (i < data->n)
             pthread_mutex_destroy(&data->fork[i++]);
         pthread_mutex_destroy(&data->con);
+        pthread_mutex_destroy(&data->printer);
         free(data->fork);
     }
     return (res);
@@ -43,15 +46,19 @@ int ft_setup(t_data *data)
     i = 0;
     data->tid = malloc(sizeof(pthread_t) * data->n);
     data->fork = malloc(sizeof(pthread_mutex_t) * data->n);
-    if (!data->tid || !data->fork)
+    data->ifork = malloc(sizeof(int) * data->n);
+    if (!data->tid || !data->fork || !data->ifork)
         return (ft_clean(data, 1));
     while (i < data->n)
     {
-        if (pthread_mutex_init(&data->fork[i], NULL) != 0)
+        if (pthread_mutex_init(&data->fork[i], NULL))
             return (ft_clean(data ,2));
+        data->ifork[i] = 0;
         i++;
     }
-    if (pthread_mutex_init(&data->con, NULL) != 0)
+    if (pthread_mutex_init(&data->con, NULL))
+        return (ft_clean(data, 2));
+    if (pthread_mutex_init(&data->printer, NULL))
         return (ft_clean(data, 2));
     return (0);
 }
@@ -65,16 +72,9 @@ int ft_setphilo(t_data *data, t_philo *philo)
     {
         memset(&philo[i], 0, sizeof(t_philo));
         philo[i].id = i;
-        if (i % 2 == 0)
-        {
-            philo[i].left = i;
-            philo[i].right = (i + 1) % data->n;
-        }
-        else
-        {
-            philo[i].left = (i + 1) % data->n;
-            philo[i].right = i;
-        }
+        philo[i].stage = 0;
+        philo[i].left = i;
+        philo[i].right = (i + 1) % data->n;
         philo[i].data = data;
         i++;
     }

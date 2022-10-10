@@ -12,27 +12,29 @@ int ft_control(t_data *data, t_philo *philo)
         i = 0;
         sum = 0;
         t = ft_gettime();
+        pthread_mutex_lock(&data->con);
         while (i < data->n)
         {
             sum += philo[i].goal;
-            pthread_mutex_lock(&data->con);
-            if (t > philo[i].dtime)
+            if (philo[i].stage != 1 && philo[i].dtime < t)
             {
                 ft_msg(&philo[i], t, "died");
                 data->stop = 1;
-                return (pthread_mutex_unlock(&philo->data->con));
+                pthread_mutex_unlock(&data->con);
+                //printf("======== > main die here\n");
+                return (0);
             }
-            pthread_mutex_unlock(&data->con);
             i++;
         }
-        if (sum == data->n)
+        if ((data->goal > 0 && sum == data->n) || philo[i].stage == -1)
         {
-            pthread_mutex_lock(&data->con);
             data->stop = 1;
-            printf("main end=====>\n");
             pthread_mutex_unlock(&data->con);
+            //printf("======== > main end here\n");
             return (0);
         }
+        pthread_mutex_unlock(&data->con);
+        usleep(200);
     }
     return (0);
 }
@@ -45,14 +47,14 @@ void *ft_dining(void *arg)
 
     while (1)
     {
-        if (ft_pickfork(philo, philo->left) != 0 ||
-            ft_pickfork(philo, philo->right) != 0 ||
-            ft_eat(philo) != 0 ||
-            ft_releasefork(philo) != 0 ||
-            ft_sleep(philo) != 0)
-            break;
+        if (ft_think(philo) == 1 || ft_pickfork(philo) == 1)
+            break ;
+        ft_eat(philo);
+        ft_releasefork(philo);
+        ft_sleep(philo);
     }
-    printf("%d ====> end\n", philo->id);
+    ft_releasefork(philo);
+    //printf("%d ====> end\n", philo->id);
     return (0);
 }
 

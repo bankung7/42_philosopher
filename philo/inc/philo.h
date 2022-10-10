@@ -17,10 +17,12 @@ typedef struct s_data
     int sleep;
     int goal;
     int stop;
+    int *ifork;
     unsigned long stime;
     pthread_t   *tid;
     pthread_mutex_t *fork;
     pthread_mutex_t con;
+    pthread_mutex_t printer;
 }   t_data;
 
 typedef struct s_philo
@@ -30,6 +32,7 @@ typedef struct s_philo
     int right;
     int round;
     int goal;
+    int stage;
     unsigned long dtime;
     t_data *data;
 }   t_philo;
@@ -37,7 +40,8 @@ typedef struct s_philo
 
 // process.c
 int ft_msg(t_philo *philo, unsigned long t, char *str);
-int ft_pickfork(t_philo *philo, int fork);
+int ft_think(t_philo *philo);
+int ft_pickfork(t_philo *philo);
 int ft_eat(t_philo *philo);
 int ft_releasefork(t_philo *philo);
 int ft_sleep(t_philo *philo);
