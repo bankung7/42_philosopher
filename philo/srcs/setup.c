@@ -53,7 +53,7 @@ int ft_setup(t_data *data)
     {
         if (pthread_mutex_init(&data->fork[i], NULL))
             return (ft_clean(data ,2));
-        data->ifork[i] = 0;
+        data->ifork[i] = -1;
         i++;
     }
     if (pthread_mutex_init(&data->con, NULL))

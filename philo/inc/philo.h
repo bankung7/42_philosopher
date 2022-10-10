@@ -8,6 +8,11 @@
 # include <stdlib.h>
 # include <string.h>
 
+# define DIE -1
+# define THINK 0
+# define EAT 1
+# define SLEEP 2
+
 // structure
 typedef struct s_data
 {

@@ -26,7 +26,7 @@ int ft_control(t_data *data, t_philo *philo)
             }
             i++;
         }
-        if ((data->goal > 0 && sum == data->n) || philo[i].stage == -1)
+        if ((data->goal > 0 && sum == data->n))
         {
             data->stop = 1;
             pthread_mutex_unlock(&data->con);
@@ -47,9 +47,8 @@ void *ft_dining(void *arg)
 
     while (1)
     {
-        if (ft_think(philo) == 1 || ft_pickfork(philo) == 1)
+        if (ft_think(philo) == 1 || ft_eat(philo) == 1)
             break ;
-        ft_eat(philo);
         ft_releasefork(philo);
         ft_sleep(philo);
     }
