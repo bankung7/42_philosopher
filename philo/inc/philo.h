@@ -36,23 +36,27 @@ typedef struct s_philo
 }	t_philo;
 
 // setup.c
-int		ft_log(char *str, int res);
+int		ft_destroy(t_data *data);
 int		ft_clean(t_data *data, int res);
 int		ft_setphilo(t_data *data, t_philo *philo);
 int		ft_setup(t_data *data);
 int		ft_getargs(t_data *data, int argc, char **argv);
 
 // process.c
-int		ft_msg(t_philo *philo, ssize_t t, char *str, int stage);
 int		ft_think(t_philo *philo);
 int		ft_pickfork(t_philo *philo);
 int		ft_eat(t_philo *philo);
 int		ft_releasefork(t_philo *philo);
 
 // utils.c
+int		ft_msg(t_philo *philo, ssize_t t, char *str, int stage);
+int		ft_log(char *str, int res);
+int		ft_clearfork(t_philo *philo);
+int		ft_atoi(char *str);
+
+// time.c
 void	ft_wait(int t);
 int		ft_timedif(ssize_t t1, ssize_t t2);
 ssize_t	ft_gettime(void);
-int		ft_atoi(char *str);
 
 #endif

@@ -1,9 +1,13 @@
 #include "philo.h"
 
-int	ft_log(char *str, int res)
+int	ft_destroy(t_data *data)
 {
-	printf("%s\n", str);
-	return (res);
+	int	i;
+
+	i = 0;
+	while (i < data->n)
+		pthread_mutex_destroy(&data->fork[i++]);
+	return (0);
 }
 
 int	ft_clean(t_data *data, int res)

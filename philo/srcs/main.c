@@ -1,5 +1,27 @@
 #include "philo.h"
 
+int	ft_isdie(t_data *data, t_philo *philo, ssize_t t)
+{
+	int	i;
+	int	sum;
+
+	i = 0;
+	sum = 0;
+	while (i < data->n)
+	{
+		sum += philo[i].round;
+		if (t > philo[i].dtime)
+		{
+			printf("%d\t%d died\n", ft_timedif(t, philo[i].stime), i + 1);
+			data->stage = 1;
+			ft_clearfork(&philo[i]);
+			return (-(data->n + 1));
+		}
+		i++;
+	}
+	return (sum);
+}
+
 int	ft_monitor(t_data *data, t_philo *philo)
 {
 	int		i;
@@ -12,37 +34,14 @@ int	ft_monitor(t_data *data, t_philo *philo)
 		i = 0;
 		sum = 0;
 		t = ft_gettime();
-		while (i < data->n)
+		pthread_mutex_lock(&data->con);
+		sum = ft_isdie(data, philo, t);
+		if (sum == 0 || (data->n + sum == -1))
 		{
-			pthread_mutex_lock(&data->con);
-			sum += philo[i].round;
-			if (t > philo[i].dtime)
-			{
-				printf("%d\t%d died\n", ft_timedif(t, philo[i].stime), i + 1);
-				data->stage = 1;
-				if (data->ifork[philo[i].left] == i)
-				{
-					data->ifork[philo[i].left] = -1;
-					pthread_mutex_unlock(&data->fork[philo[i].left]);
-				}
-				if (data->ifork[philo[i].right] == i)
-				{
-					data->ifork[philo[i].right] = -1;
-					pthread_mutex_unlock(&data->fork[philo[i].right]);
-				}
-				pthread_mutex_unlock(&data->con);
-				return (1);
-			}
-			pthread_mutex_unlock(&data->con);
-			i++;
-		}
-		if (sum == 0)
-		{
-			pthread_mutex_lock(&data->con);
 			data->stage = 1;
-			pthread_mutex_unlock(&data->con);
-			return (1);
+			return (pthread_mutex_unlock(&data->con));
 		}
+		pthread_mutex_unlock(&data->con);
 	}
 	return (0);
 }
@@ -102,6 +101,7 @@ int	main(int argc, char **argv)
 		return (ft_log("Something wrong", 1));
 	if (ft_philosopher(&data) == 1)
 		return (ft_log("Something wrong", 1));
+	ft_destroy(&data);
 	ft_clean(&data, 0);
 	return (0);
 }

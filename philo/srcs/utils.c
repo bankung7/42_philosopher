@@ -1,32 +1,5 @@
 #include "philo.h"
 
-void	ft_wait(int t)
-{
-	ssize_t	ft;
-
-	ft = ft_gettime() + t;
-	while (ft_gettime() < ft)
-		usleep(t / 1000);
-}
-
-int	ft_timedif(ssize_t t1, ssize_t t2)
-{
-	int	t;
-
-	t = (int)(t1 - t2);
-	return (t);
-}
-
-ssize_t	ft_gettime(void)
-{
-	ssize_t			time;
-	struct timeval	t;
-
-	gettimeofday(&t, NULL);
-	time = (t.tv_sec * 1000) + (t.tv_usec / 1000);
-	return (time);
-}
-
 int	ft_atoi(char *str)
 {
 	int	i;
@@ -52,4 +25,19 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (nbr * sign);
+}
+
+int	ft_log(char *str, int res)
+{
+	printf("%s\n", str);
+	return (res);
+}
+
+int	ft_msg(t_philo *philo, ssize_t t, char *str, int stage)
+{
+	pthread_mutex_lock(&philo->data->printer);
+	if (stage == 0)
+		printf("%d\t%d %s\n", ft_timedif(t, philo->stime), philo->id + 1, str);
+	pthread_mutex_unlock(&philo->data->printer);
+	return (0);
 }
