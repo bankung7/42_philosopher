@@ -33,10 +33,10 @@ int	ft_log(char *str, int res)
 	return (res);
 }
 
-int	ft_msg(t_philo *philo, ssize_t t, char *str, int stage)
+int	ft_msg(t_philo *philo, ssize_t t, char *str)
 {
 	pthread_mutex_lock(&philo->data->printer);
-	if (stage == 0)
+	if (philo->data->iprint == 0)
 		printf("%d\t%d %s\n", ft_timedif(t, philo->stime), philo->id + 1, str);
 	pthread_mutex_unlock(&philo->data->printer);
 	return (0);

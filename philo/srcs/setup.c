@@ -66,6 +66,8 @@ int	ft_setup(t_data *data)
 	}
 	if (pthread_mutex_init(&data->con, NULL) != 0)
 		return (ft_clean(data, 1));
+	if (pthread_mutex_init(&data->cfork, NULL) != 0)
+		return (ft_clean(data, 1));
 	if (pthread_mutex_init(&data->printer, NULL) != 0)
 		return (ft_clean(data, 1));
 	return (0);
@@ -79,8 +81,13 @@ int	ft_getargs(t_data *data, int argc, char **argv)
 	data->sleep = ft_atoi(argv[4]);
 	data->goal = -1;
 	data->stage = 0;
+	data->iprint = 0;
+	data->count = -1;
 	if (argc == 6)
+	{
 		data->goal = ft_atoi(argv[5]);
+		data->count = data->goal * data->n;
+	}
 	if (data->n <= 0 || data->think < 0 || data->eat < 0 \
 		|| data->sleep < 0 || (argc == 6 && data->goal < 0))
 		return (1);

@@ -1,71 +1,82 @@
 #include "philo.h"
 
-int	ft_think(t_philo *philo)
+int ft_isdie(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data->con);
-	if (philo->data->stage == 1)
-	{
-		pthread_mutex_unlock(&philo->data->con);
-		return (1);
-	}
-	pthread_mutex_unlock(&philo->data->con);
-	return (0);
+    pthread_mutex_lock(&philo->data->con);
+    if (ft_gettime() > philo->dtime || philo->data->stage == 1)
+    {
+        if (philo->data->stage != 1)
+        {
+            ft_msg(philo, ft_gettime(), "died");
+            philo->data->stage = 1;
+        }
+        pthread_mutex_lock(&philo->data->printer);
+        philo->data->iprint = 1;
+        pthread_mutex_unlock(&philo->data->printer);
+        pthread_mutex_unlock(&philo->data->con);
+        ft_releasefork(philo);
+        return (1);
+    }
+    pthread_mutex_unlock(&philo->data->con);
+    return (0);
 }
 
-int	ft_pickfork(t_philo *philo)
+int ft_pickfork(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->data->fork[philo->left]);
-	pthread_mutex_lock(&philo->data->con);
-	philo->data->ifork[philo->left] = philo->id;
-	ft_msg(philo, ft_gettime(), "has taken a fork", philo->data->stage);
-	pthread_mutex_unlock(&philo->data->con);
-	pthread_mutex_lock(&philo->data->fork[philo->right]);
-	pthread_mutex_lock(&philo->data->con);
-	philo->data->ifork[philo->right] = philo->id;
-	ft_msg(philo, ft_gettime(), "has taken a fork", philo->data->stage);
-	pthread_mutex_unlock(&philo->data->con);
-	return (0);
+    int i;
+    int side;
+
+    i = 0;
+    while (i < 2)
+    {
+        if (ft_isdie(philo) == 1)
+            return (1);
+        if (i % 2 == 0)
+            side = philo->left;
+        else
+            side = philo->right;
+        pthread_mutex_lock(&philo->data->cfork);
+        if (philo->data->ifork[side] == -1)
+        {
+            philo->data->ifork[side] = philo->id;
+            pthread_mutex_unlock(&philo->data->cfork);
+            pthread_mutex_lock(&philo->data->fork[side]);
+            ft_msg(philo, ft_gettime(), "has taken a fork");
+            i++;
+        }
+        else
+            pthread_mutex_unlock(&philo->data->cfork);
+    }
+    return (0);
 }
 
-int	ft_eat(t_philo *philo)
+int ft_eat(t_philo *philo)
 {
-	ssize_t	t;
-
-	t = ft_gettime();
-	pthread_mutex_lock(&philo->data->con);
-	philo->dtime = t + philo->data->think;
-	ft_msg(philo, ft_gettime(), "is eating", philo->data->stage);
-	if (philo->round > 0)
-		philo->round--;
-	pthread_mutex_unlock(&philo->data->con);
-	ft_wait(philo->data->eat);
-	return (0);
+    ft_msg(philo, ft_gettime(), "is eating");
+    pthread_mutex_lock(&philo->data->con);
+    philo->dtime = ft_gettime() + philo->data->think;
+    if (philo->round-- > 0)
+        philo->data->count--;
+    if (philo->data->count == 0)
+        philo->data->stage = 1;
+    pthread_mutex_unlock(&philo->data->con);
+    ft_wait(philo->data->eat);
+    return (0);
 }
 
-int	ft_clearfork(t_philo *philo)
+int ft_releasefork(t_philo *philo)
 {
-	if (philo->data->ifork[philo->left] == philo->id)
-	{
-		philo->data->ifork[philo->left] = -1;
-		pthread_mutex_unlock(&philo->data->fork[philo->left]);
-	}
-	if (philo->data->ifork[philo->right] == philo->id)
-	{
-		philo->data->ifork[philo->right] = -1;
-		pthread_mutex_unlock(&philo->data->fork[philo->right]);
-	}
-	return (0);
-}
-
-int	ft_releasefork(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->con);
-	ft_msg(philo, ft_gettime(), "is sleeping", philo->data->stage);
-	ft_clearfork(philo);
-	pthread_mutex_unlock(&philo->data->con);
-	ft_wait(philo->data->sleep);
-	pthread_mutex_lock(&philo->data->con);
-	ft_msg(philo, ft_gettime(), "is thinking", philo->data->stage);
-	pthread_mutex_unlock(&philo->data->con);
-	return (0);
+    pthread_mutex_lock(&philo->data->cfork);
+    if (philo->data->ifork[philo->right] == philo->id)
+    {
+        pthread_mutex_unlock(&philo->data->fork[philo->right]);
+        philo->data->ifork[philo->right] = -1;
+    }
+    if (philo->data->ifork[philo->left] == philo->id)
+    {
+        pthread_mutex_unlock(&philo->data->fork[philo->left]);
+        philo->data->ifork[philo->left] = -1;
+    }
+    pthread_mutex_unlock(&philo->data->cfork);
+    return (0);
 }
