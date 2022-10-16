@@ -1,56 +1,43 @@
 #include "philo.h"
 
-int ft_error(char *str, int res)
+int	ft_atoi(char *str)
 {
-    printf("%s\n", str);
-    return (res);
+	int	i;
+	int	nbr;
+	int	sign;
+
+	if (!str)
+		return (-1);
+	i = 0;
+	nbr = 0;
+	sign = 1;
+	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i])
+	{
+		nbr = nbr * 10 + (str[i] - '0');
+		i++;
+	}
+	return (nbr * sign);
 }
 
-int ft_atoi(char *str)
+int	ft_log(char *str, int res)
 {
-    int i;
-    int n;
-    int sign;
-
-    i = 0;
-    n = 0;
-    sign = 1;
-    while (str[i] && (str[i] == ' ' || str[i] == '\t'))
-        i++;
-    if (str[i] == '+' || str[i] == '-')
-    {
-        if (str[i] == '-')
-            sign = -1;
-        i++;
-    }
-    while (str[i])
-    {
-        if (str[i] < '0' || str[i] > '9')
-            return (-1);
-        n = n * 10 + (str[i] - '0');
-        i++;
-    }
-    return (n * sign);
+	printf("%s\n", str);
+	return (res);
 }
 
-unsigned long ft_gettime(void)
+int	ft_msg(t_philo *philo, ssize_t t, char *str, int stage)
 {
-    struct timeval t;
-
-    gettimeofday(&t, NULL);
-    return (t.tv_sec * 1000 + t.tv_usec / 1000);
-}
-
-unsigned long ft_timedif(unsigned long t1, unsigned long t2)
-{
-    return ((t1 - t2));
-}
-
-void    ft_wait(int t)
-{
-    unsigned long ft;
-
-    ft = ft_gettime() + t;
-    while (ft_gettime() < ft)
-        usleep(t / 1000);
+	pthread_mutex_lock(&philo->data->printer);
+	if (stage == 0)
+		printf("%d\t%d %s\n", ft_timedif(t, philo->stime), philo->id + 1, str);
+	pthread_mutex_unlock(&philo->data->printer);
+	return (0);
 }

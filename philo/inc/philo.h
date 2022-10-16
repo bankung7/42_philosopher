@@ -1,5 +1,5 @@
-#ifndef PHILOSOPHER_H
-# define PHILOSOPHER_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <unistd.h>
 # include <stdio.h>
@@ -8,61 +8,55 @@
 # include <stdlib.h>
 # include <string.h>
 
-# define DIE -1
-# define THINK 0
-# define EAT 1
-# define SLEEP 2
-
-// structure
+// Structure
 typedef struct s_data
 {
-    int n;
-    int think;
-    int eat;
-    int sleep;
-    int goal;
-    int stop;
-    int *ifork;
-    unsigned long stime;
-    pthread_t   *tid;
-    pthread_mutex_t *fork;
-    pthread_mutex_t con;
-    pthread_mutex_t printer;
-}   t_data;
+	int				n;
+	int				think;
+	int				eat;
+	int				sleep;
+	int				goal;
+	int				stage;
+	int				*ifork;
+	pthread_t		*tid;
+	pthread_mutex_t	*fork;
+	pthread_mutex_t	con;
+	pthread_mutex_t	printer;
+}	t_data;
 
 typedef struct s_philo
 {
-    int id;
-    int left;
-    int right;
-    int round;
-    int goal;
-    int stage;
-    unsigned long dtime;
-    t_data *data;
-}   t_philo;
-
-
-// process.c
-int ft_msg(t_philo *philo, unsigned long t, char *str);
-int ft_think(t_philo *philo);
-int ft_pickfork(t_philo *philo);
-int ft_eat(t_philo *philo);
-int ft_releasefork(t_philo *philo);
-int ft_sleep(t_philo *philo);
-
+	int		id;
+	int		left;
+	int		right;
+	int		round;
+	ssize_t	stime;
+	ssize_t	dtime;
+	t_data	*data;
+}	t_philo;
 
 // setup.c
-int ft_clean(t_data *data, int res);
-int ft_setvar(t_data *data, int argc, char **argv);
-int ft_setup(t_data *data);
-int ft_setphilo(t_data *data, t_philo *philo);
+int		ft_destroy(t_data *data);
+int		ft_clean(t_data *data, int res);
+int		ft_setphilo(t_data *data, t_philo *philo);
+int		ft_setup(t_data *data);
+int		ft_getargs(t_data *data, int argc, char **argv);
+
+// process.c
+int		ft_think(t_philo *philo);
+int		ft_pickfork(t_philo *philo);
+int		ft_eat(t_philo *philo);
+int		ft_releasefork(t_philo *philo);
 
 // utils.c
-int ft_error(char *str, int res);
-int ft_atoi(char *str);
-unsigned long ft_gettime(void);
-unsigned long ft_timedif(unsigned long t1, unsigned long t2);
-void    ft_wait(int t);
+int		ft_msg(t_philo *philo, ssize_t t, char *str, int stage);
+int		ft_log(char *str, int res);
+int		ft_clearfork(t_philo *philo);
+int		ft_atoi(char *str);
+
+// time.c
+void	ft_wait(int t);
+int		ft_timedif(ssize_t t1, ssize_t t2);
+ssize_t	ft_gettime(void);
 
 #endif
