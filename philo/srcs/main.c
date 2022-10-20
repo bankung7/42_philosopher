@@ -1,12 +1,10 @@
 #include "philo.h"
 
-int	ft_isdie(t_data *data, t_philo *philo)
+int	ft_isdie(t_data *data, t_philo *philo, int sum)
 {
 	int	i;
-	int	sum;
 
 	i = 0;
-	sum = 0;
 	while (i < data->n)
 	{
 		pthread_mutex_lock(&philo[i].meal);
@@ -36,7 +34,7 @@ int	ft_control(t_data *data, t_philo *philo)
 
 	while (1)
 	{
-		sum = ft_isdie(data, philo); 
+		sum = ft_isdie(data, philo, 0);
 		if (data->stop == 1)
 			return (1);
 	}
@@ -50,6 +48,11 @@ void	*ft_dining(void *arg)
 	philo = (t_philo *)arg;
 	while (ft_gettime() < philo->data->stime)
 		usleep(100);
+	if (philo->data->n == 1)
+	{
+		ft_onephilo(philo);
+		return (0);
+	}
 	if (philo->id % 2 == 1)
 		ft_think(philo);
 	while (philo->data->stop == 0)

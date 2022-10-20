@@ -12,6 +12,7 @@ void	ft_wait(t_philo *philo, int t)
 		usleep(100);
 	}
 }
+
 int	ft_timedif(ssize_t t1, ssize_t t2)
 {
 	int	t;

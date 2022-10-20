@@ -1,15 +1,27 @@
 #include "philo.h"
 
-int ft_think(t_philo *philo)
+int	ft_onephilo(t_philo *philo)
 {
-	ssize_t wtime;
+	pthread_mutex_lock(&philo->data->fork[philo->left]);
+	ft_msg(philo, ft_gettime(), "has taken a fork");
+	while (philo->data->stop == 0)
+		usleep(100);
+	pthread_mutex_unlock(&philo->data->fork[philo->left]);
+	return (0);
+}
 
+int	ft_think(t_philo *philo)
+{
+	ssize_t	wtime;
+
+	if (philo->data->ttdie - philo->data->tteat - philo->data->ttsleep < 100)
+		return (0);
 	wtime = philo->data->ttdie - (philo->dtime - ft_gettime());
 	ft_wait(philo, wtime / 2);
 	return (0);
 }
 
-int ft_eat(t_philo *philo)
+int	ft_eat(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->fork[philo->left]);
 	ft_msg(philo, ft_gettime(), "has taken a fork");
@@ -27,7 +39,7 @@ int ft_eat(t_philo *philo)
 	return (0);
 }
 
-int ft_sleep(t_philo *philo)
+int	ft_sleep(t_philo *philo)
 {
 	ft_msg(philo, ft_gettime(), "is sleeping");
 	pthread_mutex_unlock(&philo->data->fork[philo->left]);

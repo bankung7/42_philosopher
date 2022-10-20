@@ -17,7 +17,7 @@ typedef struct s_data
 	int				ttsleep;
 	int				goal;
 	int				stop;
-	ssize_t		stime;
+	ssize_t			stime;
 	pthread_t		*tid;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	con;
@@ -26,13 +26,13 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	int		id;
-	int		left;
-	int		right;
-	int		round;
-	ssize_t		dtime;
+	int				id;
+	int				left;
+	int				right;
+	int				round;
+	ssize_t			dtime;
 	pthread_mutex_t	meal;
-	t_data	*data;
+	t_data			*data;
 }	t_philo;
 
 // setup.c
@@ -43,6 +43,7 @@ int		ft_setup(t_data *data);
 int		ft_getargs(t_data *data, int argc, char **argv);
 
 // process.c
+int		ft_onephilo(t_philo *philo);
 int		ft_think(t_philo *philo);
 int		ft_eat(t_philo *philo);
 int		ft_sleep(t_philo *philo);
