@@ -1,26 +1,62 @@
 #include "philo.h"
 
+int	ft_isdie(t_data *data, t_philo *philo)
+{
+	int	i;
+	int	sum;
+
+	i = 0;
+	sum = 0;
+	while (i < data->n)
+	{
+		pthread_mutex_lock(&philo[i].meal);
+		sum += philo[i].round;
+		if (ft_gettime() > philo[i].dtime)
+		{
+			ft_msg(&philo[i], ft_gettime(), "died");
+			pthread_mutex_lock(&data->con);
+			data->stop = 1;
+			pthread_mutex_unlock(&data->con);
+		}
+		pthread_mutex_unlock(&philo[i].meal);
+		i++;
+	}
+	if (sum == 0)
+	{
+		pthread_mutex_lock(&data->con);
+		data->stop = 1;
+		pthread_mutex_unlock(&data->con);
+	}
+	return (sum);
+}
+
+int	ft_control(t_data *data, t_philo *philo)
+{
+	int	sum;
+
+	while (1)
+	{
+		sum = ft_isdie(data, philo); 
+		if (data->stop == 1)
+			return (1);
+	}
+	return (0);
+}
+
 void	*ft_dining(void *arg)
 {
-    int i = 0;
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (1)
+	while (ft_gettime() < philo->data->stime)
+		usleep(100);
+	if (philo->id % 2 == 1)
+		ft_think(philo);
+	while (philo->data->stop == 0)
 	{
-        if (ft_pickfork(philo) == 1)
-            break ;
-
-        ft_eat(philo);
-
-        ft_msg(philo, ft_gettime(), "is sleeping");
-        
-        ft_releasefork(philo);
-
-        ft_wait(philo->data->sleep);
-
-        ft_msg(philo, ft_gettime(), "is thinking");
-        i++;
+		ft_eat(philo);
+		ft_sleep(philo);
+		ft_think(philo);
 	}
 	return (0);
 }
@@ -28,24 +64,21 @@ void	*ft_dining(void *arg)
 int	ft_philosopher(t_data *data)
 {
 	int		i;
-	ssize_t	t;
 	t_philo	*philo;
 
 	i = 0;
-	t = ft_gettime();
 	philo = malloc(sizeof(t_philo) * data->n);
 	if (!philo)
 		return (ft_clean(data, 1));
 	ft_setphilo(data, philo);
+	data->stime = ft_gettime() + (data->n * 5);
 	while (i < data->n)
 	{
-		philo[i].stime = t;
-		philo[i].dtime = t + data->think;
+		philo[i].dtime = data->stime + data->ttdie;
 		pthread_create(&data->tid[i], NULL, ft_dining, (void *)&philo[i]);
-		if (i % 2 == 0)
-			usleep(100);
 		i++;
 	}
+	ft_control(data, philo);
 	i = 0;
 	while (i < data->n)
 		pthread_join(data->tid[i++], NULL);

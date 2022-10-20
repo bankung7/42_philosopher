@@ -21,6 +21,8 @@ int	ft_atoi(char *str)
 	}
 	while (str[i])
 	{
+		if (str[i] < '0' || str[i] > '9')
+			return (-1);
 		nbr = nbr * 10 + (str[i] - '0');
 		i++;
 	}
@@ -35,9 +37,10 @@ int	ft_log(char *str, int res)
 
 int	ft_msg(t_philo *philo, ssize_t t, char *str)
 {
+	if (philo->data->stop == 1)
+		return (1);
 	pthread_mutex_lock(&philo->data->printer);
-	if (philo->data->iprint == 0)
-		printf("%d\t%d %s\n", ft_timedif(t, philo->stime), philo->id + 1, str);
+	printf("%d\t%d %s\n", ft_timedif(t, philo->data->stime), philo->id + 1, str);
 	pthread_mutex_unlock(&philo->data->printer);
 	return (0);
 }

@@ -12,18 +12,15 @@
 typedef struct s_data
 {
 	int				n;
-	int				think;
-	int				eat;
-	int				sleep;
+	int				ttdie;
+	int				tteat;
+	int				ttsleep;
 	int				goal;
-	int				stage;
-	int				count;
-	int				iprint;
-	int				*ifork;
+	int				stop;
+	ssize_t		stime;
 	pthread_t		*tid;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	con;
-	pthread_mutex_t cfork;
 	pthread_mutex_t	printer;
 }	t_data;
 
@@ -33,8 +30,8 @@ typedef struct s_philo
 	int		left;
 	int		right;
 	int		round;
-	ssize_t	stime;
-	ssize_t	dtime;
+	ssize_t		dtime;
+	pthread_mutex_t	meal;
 	t_data	*data;
 }	t_philo;
 
@@ -47,9 +44,8 @@ int		ft_getargs(t_data *data, int argc, char **argv);
 
 // process.c
 int		ft_think(t_philo *philo);
-int		ft_pickfork(t_philo *philo);
 int		ft_eat(t_philo *philo);
-int		ft_releasefork(t_philo *philo);
+int		ft_sleep(t_philo *philo);
 
 // utils.c
 int		ft_msg(t_philo *philo, ssize_t t, char *str);
@@ -58,7 +54,7 @@ int		ft_clearfork(t_philo *philo);
 int		ft_atoi(char *str);
 
 // time.c
-void	ft_wait(int t);
+void	ft_wait(t_philo *philo, int t);
 int		ft_timedif(ssize_t t1, ssize_t t2);
 ssize_t	ft_gettime(void);
 

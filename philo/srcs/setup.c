@@ -16,8 +16,6 @@ int	ft_clean(t_data *data, int res)
 		free(data->tid);
 	if (data->fork)
 		free(data->fork);
-	if (data->ifork)
-		free(data->ifork);
 	return (res);
 }
 
@@ -28,7 +26,6 @@ int	ft_setphilo(t_data *data, t_philo *philo)
 	i = 0;
 	while (i < data->n)
 	{
-		memset(&philo[i], 0, sizeof(t_philo));
 		philo[i].id = i;
 		if (i % 2 == 1)
 		{
@@ -41,6 +38,8 @@ int	ft_setphilo(t_data *data, t_philo *philo)
 			philo[i].right = i;
 		}
 		philo[i].round = data->goal;
+		if (pthread_mutex_init(&philo[i].meal, NULL) != 0)
+			return (1);
 		philo[i].data = data;
 		i++;
 	}
@@ -53,20 +52,16 @@ int	ft_setup(t_data *data)
 
 	data->tid = malloc(sizeof(pthread_t) * data->n);
 	data->fork = malloc(sizeof(pthread_mutex_t) * data->n);
-	data->ifork = malloc(sizeof(int) * data->n);
-	if (!data->tid || !data->fork || !data->ifork)
+	if (!data->tid || !data->fork)
 		return (ft_clean(data, 1));
 	i = 0;
 	while (i < data->n)
 	{
-		data->ifork[i] = -1;
 		if (pthread_mutex_init(&data->fork[i], NULL) != 0)
 			return (ft_clean(data, 1));
 		i++;
 	}
 	if (pthread_mutex_init(&data->con, NULL) != 0)
-		return (ft_clean(data, 1));
-	if (pthread_mutex_init(&data->cfork, NULL) != 0)
 		return (ft_clean(data, 1));
 	if (pthread_mutex_init(&data->printer, NULL) != 0)
 		return (ft_clean(data, 1));
@@ -76,20 +71,15 @@ int	ft_setup(t_data *data)
 int	ft_getargs(t_data *data, int argc, char **argv)
 {
 	data->n = ft_atoi(argv[1]);
-	data->think = ft_atoi(argv[2]);
-	data->eat = ft_atoi(argv[3]);
-	data->sleep = ft_atoi(argv[4]);
+	data->ttdie = ft_atoi(argv[2]);
+	data->tteat = ft_atoi(argv[3]);
+	data->ttsleep = ft_atoi(argv[4]);
 	data->goal = -1;
-	data->stage = 0;
-	data->iprint = 0;
-	data->count = -1;
+	data->stop = 0;
 	if (argc == 6)
-	{
 		data->goal = ft_atoi(argv[5]);
-		data->count = data->goal * data->n;
-	}
-	if (data->n <= 0 || data->think < 0 || data->eat < 0 \
-		|| data->sleep < 0 || (argc == 6 && data->goal < 0))
+	if (data->n <= 0 || data->ttdie < 0 || data->tteat < 0 \
+		|| data->ttsleep < 0 || (argc == 6 && data->goal < 0))
 		return (1);
 	return (0);
 }
