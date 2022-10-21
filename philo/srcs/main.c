@@ -12,30 +12,22 @@ int	ft_isdie(t_data *data, t_philo *philo, int sum)
 		if (ft_gettime() > philo[i].dtime)
 		{
 			ft_msg(&philo[i], ft_gettime(), "died");
-			pthread_mutex_lock(&data->con);
-			data->stop = 1;
-			pthread_mutex_unlock(&data->con);
+			ft_setstop(data);
 		}
 		pthread_mutex_unlock(&philo[i].meal);
 		i++;
 	}
 	if (sum == 0)
-	{
-		pthread_mutex_lock(&data->con);
-		data->stop = 1;
-		pthread_mutex_unlock(&data->con);
-	}
+		ft_setstop(data);
 	return (sum);
 }
 
 int	ft_control(t_data *data, t_philo *philo)
 {
-	int	sum;
-
 	while (1)
 	{
-		sum = ft_isdie(data, philo, 0);
-		if (data->stop == 1)
+		ft_isdie(data, philo, 0);
+		if (ft_isstop(data) == 1)
 			return (1);
 	}
 	return (0);
@@ -55,7 +47,7 @@ void	*ft_dining(void *arg)
 	}
 	if (philo->id % 2 == 1)
 		ft_think(philo);
-	while (philo->data->stop == 0)
+	while (ft_isstop(philo->data) == 0)
 	{
 		ft_eat(philo);
 		ft_sleep(philo);

@@ -37,10 +37,30 @@ int	ft_log(char *str, int res)
 
 int	ft_msg(t_philo *philo, ssize_t t, char *str)
 {
-	if (philo->data->stop == 1)
+	if (ft_isstop(philo->data) == 1)
 		return (1);
 	pthread_mutex_lock(&philo->data->printer);
 	printf("%d\t%d %s\n", ft_timedif(t, philo->data->stime), philo->id + 1, str);
 	pthread_mutex_unlock(&philo->data->printer);
 	return (0);
+}
+
+int ft_setstop(t_data *data)
+{
+	pthread_mutex_lock(&data->con);
+	data->stop = 1;
+	pthread_mutex_unlock(&data->con);
+	return (0);
+}
+
+int ft_isstop(t_data *data)
+{
+	int t;
+
+	t = 0;
+	pthread_mutex_lock(&data->con);
+	if (data->stop == 1)
+		t = 1;
+	pthread_mutex_unlock(&data->con);
+	return (t);
 }

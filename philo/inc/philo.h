@@ -51,8 +51,9 @@ int		ft_sleep(t_philo *philo);
 // utils.c
 int		ft_msg(t_philo *philo, ssize_t t, char *str);
 int		ft_log(char *str, int res);
-int		ft_clearfork(t_philo *philo);
 int		ft_atoi(char *str);
+int		ft_isstop(t_data *t_data);
+int ft_setstop(t_data *data);
 
 // time.c
 void	ft_wait(t_philo *philo, int t);

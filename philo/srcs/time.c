@@ -7,7 +7,7 @@ void	ft_wait(t_philo *philo, int t)
 	ft = ft_gettime() + t;
 	while (ft_gettime() < ft)
 	{
-		if (philo->data->stop == 1)
+		if (ft_isstop(philo->data) == 1)
 			break ;
 		usleep(100);
 	}

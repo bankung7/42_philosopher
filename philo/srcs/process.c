@@ -4,8 +4,7 @@ int	ft_onephilo(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->fork[philo->left]);
 	ft_msg(philo, ft_gettime(), "has taken a fork");
-	while (philo->data->stop == 0)
-		usleep(100);
+	ft_wait(philo, philo->data->ttdie * 2);
 	pthread_mutex_unlock(&philo->data->fork[philo->left]);
 	return (0);
 }
