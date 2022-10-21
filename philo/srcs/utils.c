@@ -45,7 +45,7 @@ int	ft_msg(t_philo *philo, ssize_t t, char *str)
 	return (0);
 }
 
-int ft_setstop(t_data *data)
+int	ft_setstop(t_data *data)
 {
 	pthread_mutex_lock(&data->con);
 	data->stop = 1;
@@ -53,9 +53,9 @@ int ft_setstop(t_data *data)
 	return (0);
 }
 
-int ft_isstop(t_data *data)
+int	ft_isstop(t_data *data)
 {
-	int t;
+	int	t;
 
 	t = 0;
 	pthread_mutex_lock(&data->con);

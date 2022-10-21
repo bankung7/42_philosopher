@@ -70,7 +70,8 @@ int	ft_philosopher(t_data *data)
 	while (i < data->n)
 	{
 		philo[i].dtime = data->stime + data->ttdie;
-		pthread_create(&data->tid[i], NULL, ft_dining, (void *)&philo[i]);
+		if (pthread_create(&data->tid[i], NULL, ft_dining, (void *)&philo[i]) != 0)
+			return (ft_clean(data, 1));
 		i++;
 	}
 	ft_control(data, philo);
