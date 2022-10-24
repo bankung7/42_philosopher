@@ -1,23 +1,5 @@
 #include "philo_bonus.h"
 
-int ft_setstop(t_philo *philo)
-{
-    //sem_wait(philo->meal);
-    philo->stop = 1;
-    //sem_post(philo->meal);
-    return (0);
-}
-
-int ft_isstop(t_philo *philo)
-{
-    int t;
-
-    sem_wait(philo->meal);
-    t = philo->stop;
-    sem_post(philo->meal);
-    return (t);
-}
-
 void	ft_wait(t_philo *philo, int t)
 {
 	ssize_t	ft;

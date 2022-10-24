@@ -1,16 +1,32 @@
 #include "philo_bonus.h"
 
-int ft_dining(t_philo *philo)
+int	ft_control(t_data *data, t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	pthread_create(&data->tid, NULL, ft_counting, (void *)data);
+	pthread_detach(data->tid);
+	sem_wait(data->sdie);
+	ft_killproc(data);
+	while (i < data->n)
+		waitpid(data->pid[i++], 0, 0);
+	ft_clean(data, philo, 0);
+	return (0);
+}
+
+int	ft_dining(t_philo *philo)
 {
 	sem_unlink("/sem_meal");
 	philo->meal = sem_open("/sem_meal", O_CREAT, 180, 1);
-	pthread_create(&philo->tid, NULL, ft_dcheck, (void*)philo);
+	pthread_create(&philo->tid, NULL, ft_dcheck, (void *)philo);
+	pthread_detach(philo->tid);
 	while (ft_gettime() < philo->data->stime)
 		usleep(100);
 	if (philo->data->n == 1)
 		return (ft_onephilo(philo));
 	if (philo->id % 2 == 1)
-		ft_wait(philo, philo->data->ttdie / 2);
+		ft_wait(philo, philo->data->ttdie / 2 - (philo->data->ttdie % 100));
 	while (1)
 	{
 		ft_eat(philo);
@@ -20,22 +36,20 @@ int ft_dining(t_philo *philo)
 	return (0);
 }
 
-int ft_philosopher(t_data *data)
+int	ft_philosopher(t_data *data, int i)
 {
-	int i;
-	pid_t id;
-	t_philo *philo;
+	pid_t	id;
+	t_philo	*philo;
 
-	i = 0;
 	philo = ft_setphilo(data);
-	data->stime = ft_gettime() + (data->n * 10 * 5);
 	if (!philo)
-		return (1);
+		return (ft_clean(data, 0, 1));
+	data->stime = ft_gettime() + (data->n * 10 * 5);
 	while (i < data->n)
 	{
 		id = fork();
 		if (id == -1)
-			return (0);
+			return (ft_clean(data, philo, 1));
 		else if (id == 0)
 		{
 			philo[i].dtime = data->stime + data->ttdie;
@@ -46,19 +60,13 @@ int ft_philosopher(t_data *data)
 			data->pid[i] = id;
 		i++;
 	}
-	pthread_create(&data->tid, NULL, ft_counting, (void*)data);
-	pthread_detach(data->tid);
-	sem_wait(data->sdie);
-	ft_killproc(data);
-	while (--i >= 0)
-		waitpid(data->pid[i], 0, 0);
-	free(philo);
+	ft_control(data, philo);
 	return (0);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_data data;
+	t_data	data;
 
 	if (argc < 5 || argc > 6)
 		return (ft_log("Incomplete Argument", 1));
@@ -66,8 +74,7 @@ int main(int argc, char **argv)
 		return (ft_log("Invalid Argument", 1));
 	if (ft_setup(&data) == 1)
 		return (ft_log("Something wrong", 1));
-	if (ft_philosopher(&data) == 1)
+	if (ft_philosopher(&data, 0) == 1)
 		return (ft_log("Something wrong", 1));
-	free(data.pid);
 	return (0);
 }

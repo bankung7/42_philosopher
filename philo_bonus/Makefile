@@ -10,12 +10,14 @@ RM = rm -rf
 INC = -Iinc
 
 SRCS_DIR = srcs/
-SRCS = main.c setup.c utils.c process.c time.c sem.c
+SRCS = main.c setup.c utils.c utils2.c process.c time.c
 
 OBJS_DIR = objs/
 OBJS = $(addprefix $(OBJS_DIR),$(SRCS:.c=.o))
 
 all: $(NAME)
+
+bonus: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(O_FLAGS)
@@ -31,5 +33,6 @@ fclean: clean
 	$(RM) $(OBJS_DIR)
 
 re: fclean all
+
 
 .PHONY: all clean fclean re
