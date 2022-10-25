@@ -26,9 +26,9 @@ int	ft_strlen(char *str)
 
 char	*ft_strjoin(char *s1, char *s2)
 {
-	int	i;
-	int	j;
-	char *tmp;
+	int		i;
+	int		j;
+	char	*tmp;
 
 	i = 0;
 	j = 0;
@@ -47,4 +47,32 @@ char	*ft_strjoin(char *s1, char *s2)
 	}
 	tmp[i + j] = 0;
 	return (tmp);
+}
+
+char	*ft_semname(int n, int i)
+{
+	int		num;
+	char	*tmp;
+	char	*output;
+
+	num = n;
+	if (num == 0)
+		i++;
+	while (num > 0)
+	{
+		num /= 10;
+		i++;
+	}
+	tmp = malloc(sizeof(char) * (i + 1));
+	if (!tmp)
+		return (0);
+	tmp[i] = 0;
+	while (--i >= 0)
+	{
+		tmp[i] = (n % 10) + '0';
+		n /= 10;
+	}
+	output = ft_strjoin("/sem_m", tmp);
+	free(tmp);
+	return (output);
 }

@@ -12,20 +12,56 @@
 
 #include "philo_bonus.h"
 
+void	*ft_control(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	while (ft_gettime() < philo->data->stime)
+		usleep(1000);
+	while (1)
+	{
+		sem_wait(philo->meal);
+		if (ft_gettime() >= philo->dtime)
+		{
+			ft_msg(philo, ft_gettime(), "died", 1);
+			ft_setdie(philo->data);
+			break ;
+		}
+		if (philo->round == 0)
+		{
+			sem_post(philo->data->scount);
+			sem_post(philo->meal);
+			break ;
+		}
+		sem_post(philo->meal);
+		usleep(100);
+	}
+	return (0);
+}
+
 int	ft_dining(t_philo *philo)
 {
-	// create thread to check first
-	printf("%d\n", philo->id + 1);
-	sleep(philo->id);
-	printf("I'm %d out\n", philo->id + 1);
-	sem_post(philo->data->scount);
+	if (pthread_create(&philo->tid, NULL, ft_control, (void *)philo) != 0)
+		return (ft_setdie(philo->data));
+	pthread_detach(philo->tid);
+	while (ft_gettime() < philo->data->stime)
+		usleep(100);
+	if (philo->id % 2 == 1)
+		ft_wait(philo->data->ttdie / 2 - (philo->data->ttdie % 100));
+	while (1)
+	{
+		ft_eat(philo);
+		ft_sleep(philo);
+		ft_think(philo);
+	}
 	return (0);
 }
 
 int	ft_philosopher(t_data *data)
 {
-	int	i;
-	t_philo *philo;
+	int		i;
+	t_philo	*philo;
 
 	i = 0;
 	philo = ft_setphilo(data);
@@ -47,6 +83,7 @@ int	ft_philosopher(t_data *data)
 	}
 	ft_scount(data);
 	ft_semclose(data);
+	ft_clean(data, philo, 0);
 	return (0);
 }
 

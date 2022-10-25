@@ -64,8 +64,7 @@ int		ft_eat(t_philo *philo);
 int		ft_sleep(t_philo *philo);
 
 // utils.c
-int		ft_isstop(t_philo *philo);
-int		ft_msg(t_philo *philo, ssize_t t, char *str);
+int		ft_msg(t_philo *philo, ssize_t t, char *str, int stop);
 int		ft_log(char *str, int res);
 int		ft_atoi(char *str);
 
@@ -80,7 +79,9 @@ ssize_t	ft_gettime(void);
 // sem.c
 int		ft_semunlink(void);
 int		ft_semclose(t_data *data);
+int ft_setdie(t_data *data);
+int	ft_killall(t_data *data);
 int 	ft_scount(t_data *data);
-char *ft_semname(int  n);
+char	*ft_semname(int n, int i);
 
 #endif

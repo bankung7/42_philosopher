@@ -16,55 +16,42 @@ int	ft_semclose(t_data *data)
 	return (0);
 }
 
-int ft_scount(t_data *data)
+int	ft_setdie(t_data *data)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (i < data->n)
-    {
-        sem_wait(data->scount);
-        printf("here %d\n", i);
-        i++;
-    }
-    i = 0;
-    while (i < data->n)
-        kill(data->pid[i++], SIGKILL);
-    i = 0;
-    while (i < data->n)
-        printf("%d\n", waitpid(data->pid[i++], 0, 0));
-    printf("all child are back\n");
-    return (0);
+	i = 0;
+	while (i < data->n)
+	{
+		sem_post(data->scount);
+		i++;
+	}
+	return (0);
 }
 
-char *ft_semname(int n)
+int	ft_killall(t_data *data)
 {
-    int i;
-    int num;
-    char    *tmp;
-    char    *output;
+	int	i;
 
-    i = 0;
-    num = n;
-    if (num == 0)
-        return (ft_strjoin("/sem_m", "0"));
-    while (num > 0)
-    {
-        num /= 10;
-        i++;
-    }
-    if (num == 0)
-        i++;
-    tmp = malloc(sizeof(char) * (i + 1));
-    if (!tmp)
-        return (0);
-    tmp[--i] = 0;
-    while (--i >= 0)
-    {
-        tmp[i] = (n % 10) + '0';
-        n /= 10;
-    }
-    output = ft_strjoin("/sem_m", tmp);
-    free(tmp);
-    return (output);
+	i = 0;
+	while (i < data->n)
+		kill(data->pid[i++], SIGKILL);
+	return (0);
+}
+
+int	ft_scount(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->n)
+	{
+		sem_wait(data->scount);
+		i++;
+	}
+	ft_killall(data);
+	i = 0;
+	while (i < data->n)
+		waitpid(data->pid[i++], 0, 0);
+	return (0);
 }

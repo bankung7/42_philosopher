@@ -33,7 +33,7 @@ t_philo	*ft_setphilo(t_data *data)
 		return (0);
 	while (i < data->n)
 	{
-		name = ft_semname(i);
+		name = ft_semname(i, 0);
 		philo[i].id = i;
 		philo[i].round = data->goal;
 		sem_unlink(name);

@@ -47,10 +47,12 @@ int	ft_log(char *str, int res)
 	return (res);
 }
 
-int	ft_msg(t_philo *philo, ssize_t t, char *str)
+int	ft_msg(t_philo *philo, ssize_t t, char *str, int stop)
 {
 	sem_wait(philo->data->sprinter);
 	printf("%d\t%d %s\n", ft_timedif(t, philo->data->stime), philo->id + 1, str);
+	if (stop == 1)
+		return (0);
 	sem_post(philo->data->sprinter);
 	return (0);
 }
