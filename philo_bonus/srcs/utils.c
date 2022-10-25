@@ -54,13 +54,3 @@ int	ft_msg(t_philo *philo, ssize_t t, char *str)
 	sem_post(philo->data->sprinter);
 	return (0);
 }
-
-int	ft_isstop(t_philo *philo)
-{
-	int	t;
-
-	sem_wait(philo->meal);
-	t = philo->stop;
-	sem_post(philo->meal);
-	return (t);
-}

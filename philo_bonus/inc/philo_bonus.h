@@ -22,6 +22,7 @@
 # include <semaphore.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <fcntl.h>
 
 // Structure
 typedef struct s_data
@@ -33,9 +34,8 @@ typedef struct s_data
 	int			goal;
 	pid_t		*pid;
 	sem_t		*sfork;
-	sem_t		*sdie;
+	sem_t		*scount;
 	sem_t		*sprinter;
-	sem_t		*sgoal;
 	ssize_t		stime;
 	pthread_t	tid;
 }	t_data;
@@ -44,7 +44,6 @@ typedef struct s_philo
 {
 	int			id;
 	int			round;
-	int			stop;
 	sem_t		*meal;
 	t_data		*data;
 	ssize_t		dtime;
@@ -71,13 +70,17 @@ int		ft_log(char *str, int res);
 int		ft_atoi(char *str);
 
 // utils2.c
-void	*ft_dcheck(void *arg);
-void	*ft_counting(void *arg);
-int		ft_killproc(t_data *data);
+char	*ft_strjoin(char *s1, char *s2);
 
 // time.c
-void	ft_wait(t_philo *philo, int t);
+void	ft_wait(int t);
 int		ft_timedif(ssize_t t1, ssize_t t2);
 ssize_t	ft_gettime(void);
+
+// sem.c
+int		ft_semunlink(void);
+int		ft_semclose(t_data *data);
+int 	ft_scount(t_data *data);
+char *ft_semname(int  n);
 
 #endif

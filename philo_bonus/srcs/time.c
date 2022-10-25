@@ -12,17 +12,13 @@
 
 #include "philo_bonus.h"
 
-void	ft_wait(t_philo *philo, int t)
+void	ft_wait(int t)
 {
 	ssize_t	ft;
 
 	ft = ft_gettime() + t;
 	while (ft_gettime() < ft)
-	{
-		if (ft_isstop(philo) == 1)
-			break ;
 		usleep(100);
-	}
 }
 
 int	ft_timedif(ssize_t t1, ssize_t t2)
