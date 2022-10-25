@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 22:04:53 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/24 22:04:56 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:50:20 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,9 @@ ssize_t	ft_gettime(void);
 // sem.c
 int		ft_semunlink(void);
 int		ft_semclose(t_data *data);
-int ft_setdie(t_data *data);
-int	ft_killall(t_data *data);
-int 	ft_scount(t_data *data);
+int		ft_setdie(t_data *data);
+int		ft_killall(t_data *data);
+int		ft_scount(t_data *data);
 char	*ft_semname(int n, int i);
 
 #endif

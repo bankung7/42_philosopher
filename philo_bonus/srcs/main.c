@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 22:05:07 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/24 22:05:08 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:52:33 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	*ft_control(void *arg)
 			break ;
 		}
 		sem_post(philo->meal);
-		usleep(100);
+		usleep(1000);
 	}
 	return (0);
 }

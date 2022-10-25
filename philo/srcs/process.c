@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   process.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/25 21:55:08 by vnilprap          #+#    #+#             */
+/*   Updated: 2022/10/25 22:00:40 by vnilprap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	ft_onephilo(t_philo *philo)
@@ -30,11 +42,11 @@ int	ft_eat(t_philo *philo)
 	philo->dtime = ft_gettime() + philo->data->ttdie;
 	pthread_mutex_unlock(&philo->meal);
 	ft_msg(philo, ft_gettime(), "is eating");
-	ft_wait(philo, philo->data->tteat);
 	pthread_mutex_lock(&philo->meal);
 	if (philo->round > 0)
 		philo->round--;
 	pthread_mutex_unlock(&philo->meal);
+	ft_wait(philo, philo->data->tteat);
 	return (0);
 }
 

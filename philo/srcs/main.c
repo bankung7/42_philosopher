@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/25 21:55:27 by vnilprap          #+#    #+#             */
+/*   Updated: 2022/10/25 22:02:02 by vnilprap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 int	ft_isdie(t_data *data, t_philo *philo, int sum)
@@ -46,7 +58,7 @@ void	*ft_dining(void *arg)
 		return (0);
 	}
 	if (philo->id % 2 == 1)
-		ft_think(philo);
+		ft_wait(philo, philo->data->tteat / 2);
 	while (ft_isstop(philo->data) == 0)
 	{
 		ft_eat(philo);
@@ -70,7 +82,8 @@ int	ft_philosopher(t_data *data)
 	while (i < data->n)
 	{
 		philo[i].dtime = data->stime + data->ttdie;
-		if (pthread_create(&data->tid[i], NULL, ft_dining, (void *)&philo[i]) != 0)
+		if (pthread_create(&data->tid[i], NULL,
+				ft_dining, (void *)&philo[i]) != 0)
 			return (ft_clean(data, 1));
 		i++;
 	}
