@@ -50,7 +50,7 @@ int	ft_setup(t_data *data)
 	ft_semunlink();
 	data->sfork = sem_open("/sem_sfork", O_CREAT, 0644, data->n);
 	data->sprinter = sem_open("/sem_sprinter", O_CREAT, 0644, 1);
-	data->scount = sem_open("/sem_scount", O_CREAT, 0644, 0);
+	data->scount = sem_open("/sem_scount", O_CREAT, 0644, data->n);
 	if (data->sfork == SEM_FAILED || data->sprinter == SEM_FAILED
 		|| data->scount == SEM_FAILED)
 		return (1);

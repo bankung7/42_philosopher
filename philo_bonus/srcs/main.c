@@ -42,6 +42,7 @@ void	*ft_control(void *arg)
 
 int	ft_dining(t_philo *philo)
 {
+	sem_wait(philo->data->scount);
 	if (pthread_create(&philo->tid, NULL, ft_control, (void *)philo) != 0)
 		return (ft_setdie(philo->data));
 	pthread_detach(philo->tid);
@@ -81,8 +82,11 @@ int	ft_philosopher(t_data *data)
 		}
 		i++;
 	}
+	while (ft_gettime() < philo->data->stime)
+		usleep(100);
 	ft_scount(data);
 	ft_semclose(data);
+	ft_semunlink();
 	ft_clean(data, philo, 0);
 	return (0);
 }
