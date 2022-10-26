@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 22:05:19 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/24 22:05:20 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/26 12:06:03 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,13 @@ int	ft_setup(t_data *data)
 
 int	ft_getargs(t_data *data, int argc, char **argv)
 {
-	data->n = ft_atoi(argv[1]);
-	data->ttdie = ft_atoi(argv[2]);
-	data->tteat = ft_atoi(argv[3]);
-	data->ttsleep = ft_atoi(argv[4]);
+	data->n = ft_atoi(argv[1], 0);
+	data->ttdie = ft_atoi(argv[2], 0);
+	data->tteat = ft_atoi(argv[3], 0);
+	data->ttsleep = ft_atoi(argv[4], 0);
 	data->goal = -1;
 	if (argc == 6)
-		data->goal = ft_atoi(argv[5]);
+		data->goal = ft_atoi(argv[5], 0);
 	if (data->n <= 0 || data->ttdie < 0 || data->tteat < 0 \
 		|| data->ttsleep < 0 || (argc == 6 && data->goal < 0))
 		return (1);

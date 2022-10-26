@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 21:50:31 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/25 21:50:35 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/26 11:11:04 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	ft_semclose(t_data *data)
 	sem_close(data->sfork);
 	sem_close(data->scount);
 	sem_close(data->sprinter);
+	ft_semunlink();
 	return (0);
 }
 

@@ -6,29 +6,27 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 21:55:52 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/25 21:55:53 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/26 12:01:15 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_atoi(char *str)
+int	ft_atoi(char *str, long nbr)
 {
 	int	i;
-	int	nbr;
 	int	sign;
 
 	if (!str)
 		return (-1);
 	i = 0;
-	nbr = 0;
 	sign = 1;
 	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 	{
 		if (str[i] == '-')
-			sign = -1;
+			return (-1);
 		i++;
 	}
 	while (str[i])
@@ -36,6 +34,8 @@ int	ft_atoi(char *str)
 		if (str[i] < '0' || str[i] > '9')
 			return (-1);
 		nbr = nbr * 10 + (str[i] - '0');
+		if (nbr < -2147483648 || nbr > 2147483647)
+			return (-1);
 		i++;
 	}
 	return (nbr * sign);

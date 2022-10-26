@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/24 22:05:13 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/24 22:05:15 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/26 11:34:14 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,12 @@ int	ft_think(t_philo *philo)
 	ssize_t	t;
 
 	t = philo->dtime - ft_gettime();
-	if (t <= 100)
+	if (t < 100)
 		return (0);
-	ft_wait(t / 2);
+	if (t / 2 > philo->data->tteat)
+		ft_wait(philo->data->tteat);
+	else
+		ft_wait(t / 2);
 	return (0);
 }
 

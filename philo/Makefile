@@ -32,4 +32,8 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+norm:
+	norminette -R CheckForbiddenSourceHeader $(SRCS_DIR) inc/
+	norminette -R CheckDefine inc/
+
+.PHONY: all clean fclean re norm	

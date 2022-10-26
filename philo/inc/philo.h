@@ -6,7 +6,7 @@
 /*   By: vnilprap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/25 21:56:19 by vnilprap          #+#    #+#             */
-/*   Updated: 2022/10/25 21:56:20 by vnilprap         ###   ########.fr       */
+/*   Updated: 2022/10/26 12:01:42 by vnilprap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int		ft_sleep(t_philo *philo);
 // utils.c
 int		ft_msg(t_philo *philo, ssize_t t, char *str);
 int		ft_log(char *str, int res);
-int		ft_atoi(char *str);
+int		ft_atoi(char *str, long nbr);
 int		ft_isstop(t_data *t_data);
 int		ft_setstop(t_data *data);
 
